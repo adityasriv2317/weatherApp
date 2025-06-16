@@ -16,12 +16,12 @@ const handleApi = async (url) => {
   }
 };
 
-export const getWeather = params=>{
-    let url = weatherApi(params);
-    return handleApi(url);
-}
+export const getWeather = (params) => {
+  let url = weatherApi(params);
+  return handleApi(url);
+};
 
-export const getLocation = params=>{
-    let url = locationApi(params);
-    return handleApi(url);
-}
+export const getLocation = (params) => {
+  let url = locationApi(params);
+  return handleApi(url);
+};

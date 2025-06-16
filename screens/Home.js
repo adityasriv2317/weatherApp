@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View, Text, Image, SafeAreaView, TextInput, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 
@@ -7,6 +7,8 @@ import { CalendarDaysIcon, MagnifyingGlassIcon, XMarkIcon } from 'react-native-h
 import { MapPinIcon } from 'react-native-heroicons/solid';
 import debounce from 'lodash.debounce';
 import { getLocation, getWeather } from 'api/handler';
+import { weatherIcon } from 'constants';
+import { storeData, getData } from 'utils/storage';
 
 export default function Home() {
   const [isSearching, setIsSearching] = useState(false);
@@ -23,11 +25,33 @@ export default function Home() {
     setIsSearching(false);
     getWeather({ city, days: 7 })
       .then((data) => {
-        console.log('Weather data for selected location:', data);
         setWeatherData(data);
       })
       .catch((error) => {
         console.error('Error fetching weather data:', error);
+      });
+
+    storeData('city', city);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchInitialWeather();
+  }, []);
+
+  const fetchInitialWeather = async () => {
+    setLoading(true);
+    const sCity = await getData('city');
+    let city = 'Varanasi';
+    if (sCity) {
+      city = sCity;
+    }
+    getWeather({ city, days: 7 })
+      .then((data) => {
+        setWeatherData(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching initial weather data:', error);
       });
     setLoading(false);
   };
@@ -47,7 +71,7 @@ export default function Home() {
   };
 
   const textDebounce = useCallback(debounce(handleCity, 1000), []);
-  let { current, location } = weatherData || { current: {}, location: {} };
+  let { current, location, forecast } = weatherData || { current: {}, location: {} };
   const date = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -132,7 +156,8 @@ export default function Home() {
           {/* image and temperature */}
           <View className="mx-6 flex w-full flex-col items-center justify-center gap-2">
             {/* <Image source={require('../assets/images/partlycloudy.png')} className="h-40 w-40" /> */}
-            <Image source={{ uri: 'https:' + current?.condition?.icon }} className="h-40 w-40" />
+            {/* <Image source={{ uri: 'https:' + current?.condition?.icon }} className="h-40 w-40" /> */}
+            <Image source={weatherIcon[current?.condition?.text]} className="h-40 w-40" />
             <Text
               className="text-center text-6xl text-white"
               style={{
@@ -158,19 +183,19 @@ export default function Home() {
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/drop.png')} className="h-8 w-8" />
               <Text className="text-white">Humidity</Text>
-              <Text className="text-white/70">60%</Text>
+              <Text className="text-white/70">{current.humidity}%</Text>
             </View>
 
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/wind.png')} className="h-8 w-8" />
               <Text className="text-white">Wind</Text>
-              <Text className="text-white/70">15 km/h</Text>
+              <Text className="text-white/70">{current.wind_kph} km/h</Text>
             </View>
 
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/sun.png')} className="h-8 w-8" />
               <Text className="text-white">Sunrise</Text>
-              <Text className="text-white/70">06:12 AM</Text>
+              <Text className="text-white/70">{forecast?.forecastday[0]?.astro?.sunrise}</Text>
             </View>
           </View>
 
@@ -188,15 +213,23 @@ export default function Home() {
                 paddingHorizontal: 10,
               }}
               className="mt-4 flex flex-row gap-4 overflow-scroll">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
-                <View
-                  key={index}
-                  className="mx-2 flex flex-col items-center rounded-3xl bg-white/15 px-6 py-4">
-                  <Image source={require('../assets/images/sun.png')} className="h-14 w-14" />
-                  <Text className="text-white">{day}</Text>
-                  <Text className="text-white/70">30&#176;C</Text>
-                </View>
-              ))}
+              {forecast?.forecastday?.map((day, i) => {
+                const dateObj = new Date(day.date).toLocaleDateString('en-US', {
+                  // weekday: 'short',
+                  day: '2-digit',
+                  month: 'short',
+                });
+
+                return (
+                  <View
+                    key={i}
+                    className="mx-2 flex flex-col items-center rounded-3xl bg-white/15 px-6 py-4">
+                    <Image source={weatherIcon[day?.day?.condition?.text]} className="h-14 w-14" />
+                    <Text className="text-white">{dateObj}</Text>
+                    <Text className="text-white/70">{day?.day?.avgtemp_c}&#176;C</Text>
+                  </View>
+                );
+              })}
             </ScrollView>
           </View>
         </View>
