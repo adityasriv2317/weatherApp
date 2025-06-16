@@ -1,0 +1,59 @@
+{
+  "alerts": { "alert": [] },
+  "current": {
+    "air_quality": {
+      "co": 675.25,
+      "gb-defra-index": 9,
+      "no2": 2.775,
+      "o3": 173,
+      "pm10": 70.3,
+      "pm2_5": 66.415,
+      "so2": 19.795,
+      "us-epa-index": 4
+    },
+    "cloud": 45,
+    "condition": {
+      "code": 1003,
+      "icon": "//cdn.weatherapi.com/weather/64x64/day/116.png",
+      "text": "Partly Cloudy"
+    },
+    "dewpoint_c": 18.3,
+    "dewpoint_f": 64.9,
+    "feelslike_c": 45,
+    "feelslike_f": 113.1,
+    "gust_kph": 21.1,
+    "gust_mph": 13.1,
+    "heatindex_c": 45,
+    "heatindex_f": 113.1,
+    "humidity": 26,
+    "is_day": 1,
+    "last_updated": "2025-06-16 17:45",
+    "last_updated_epoch": 1750076100,
+    "precip_in": 0,
+    "precip_mm": 0,
+    "pressure_in": 29.32,
+    "pressure_mb": 993,
+    "temp_c": 41.5,
+    "temp_f": 106.7,
+    "uv": 0.3,
+    "vis_km": 10,
+    "vis_miles": 6,
+    "wind_degree": 70,
+    "wind_dir": "ENE",
+    "wind_kph": 18.4,
+    "wind_mph": 11.4,
+    "windchill_c": 41.5,
+    "windchill_f": 106.7
+  },
+  "forecast": { "forecastday": [] },
+  "location": {
+    "country": "India",
+    "lat": 25.3333,
+    "localtime": "2025-06-16 17:53",
+    "localtime_epoch": 1750076616,
+    "lon": 83,
+    "name": "Varanasi",
+    "region": "Uttar Pradesh",
+    "tz_id": "Asia/Kolkata"
+  }
+}
