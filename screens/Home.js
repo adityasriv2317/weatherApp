@@ -151,7 +151,15 @@ export default function Home() {
               {location?.name},
               <Text className="text-3xl text-white/90">{' ' + location?.country}</Text>
             </Text>
-            <Text className="text-2xl text-white/70">{' ' + date}</Text>
+            <Text
+              style={{
+                textShadowColor: 'rgba(0, 0, 0, 0.2)',
+                textShadowOffset: { width: 1, height: 1 },
+                textShadowRadius: 2,
+              }}
+              className="text-2xl text-white/90">
+              {' ' + date}
+            </Text>
           </View>
 
           {/* image and temperature */}
@@ -184,19 +192,19 @@ export default function Home() {
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/drop.png')} className="h-8 w-8" />
               <Text className="text-white">Humidity</Text>
-              <Text className="text-white/70">{current.humidity}%</Text>
+              <Text className="text-white/80">{current.humidity}%</Text>
             </View>
 
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/wind.png')} className="h-8 w-8" />
               <Text className="text-white">Wind</Text>
-              <Text className="text-white/70">{current.wind_kph} km/h</Text>
+              <Text className="text-white/80">{current.wind_kph} km/h</Text>
             </View>
 
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/sun.png')} className="h-8 w-8" />
               <Text className="text-white">Sunrise</Text>
-              <Text className="text-white/70">{forecast?.forecastday[0]?.astro?.sunrise}</Text>
+              <Text className="text-white/80">{forecast?.forecastday[0]?.astro?.sunrise}</Text>
             </View>
           </View>
 
