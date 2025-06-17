@@ -9,6 +9,7 @@ import debounce from 'lodash.debounce';
 import { getLocation, getWeather } from 'api/handler';
 import { weatherIcon } from 'constants';
 import { storeData, getData } from 'utils/storage';
+import { Indicator } from 'components/Loader';
 
 export default function Home() {
   const [isSearching, setIsSearching] = useState(false);
@@ -18,21 +19,22 @@ export default function Home() {
 
   const [weatherData, setWeatherData] = useState(null);
 
-  const handleLocationPress = (location) => () => {
+  const handleLocationPress = (location) => async () => {
+    setLoading(true);
     const city = location.name;
     setLoactions([]);
-    setLoading(true);
-    setIsSearching(false);
-    getWeather({ city, days: 7 })
+    await getWeather({ city, days: 7 })
       .then((data) => {
         setWeatherData(data);
       })
       .catch((error) => {
         console.error('Error fetching weather data:', error);
       });
-
+    // .finally(() => {
     storeData('city', city);
     setLoading(false);
+    setIsSearching(false);
+    // });
   };
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function Home() {
     if (sCity) {
       city = sCity;
     }
-    getWeather({ city, days: 7 })
+    await getWeather({ city, days: 7 })
       .then((data) => {
         setWeatherData(data);
       })
@@ -84,7 +86,6 @@ export default function Home() {
       <Image
         source={require('../assets/images/bgb.jpg')}
         blurRadius={60}
-        // blurRadius={12}
         className="absolute h-full w-full"
       />
 
@@ -103,7 +104,9 @@ export default function Home() {
             ) : null}
 
             <TouchableOpacity
-              onPress={() => setIsSearching(!isSearching)}
+              onPress={() => {
+                setIsSearching(!isSearching);
+              }}
               className="absolute right-1.5 rounded-full bg-white/20 p-3.5">
               {!isSearching ? (
                 <MagnifyingGlassIcon size={20} color="white" />
@@ -243,6 +246,18 @@ export default function Home() {
           </View>
         </View>
       </SafeAreaView>
+      {/* loader */}
+      {isSearching || weatherData === null ? (
+        <View className="z-100 absolute h-full w-full flex-1 items-center justify-center bg-slate-800 opacity-90 backdrop:blur-3xl">
+          {loading ? (
+            <Indicator size={80} />
+          ) : (
+            <Text className="rounded-full bg-black/30 px-4 py-2 text-xl text-white">
+              Search your city
+            </Text>
+          )}
+        </View>
+      ) : null}
     </View>
   );
 }
