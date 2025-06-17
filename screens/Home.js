@@ -10,10 +10,12 @@ import { getLocation, getWeather } from 'api/handler';
 import { weatherIcon } from 'constants';
 import { storeData, getData } from 'utils/storage';
 import { Indicator } from 'components/Loader';
+import SlidingText from 'components/LocationHeader';
 
 export default function Home() {
   const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(false);
+  let updated = false;
 
   const [locations, setLoactions] = useState([]);
 
@@ -143,8 +145,8 @@ export default function Home() {
         {/* forecast section */}
         <View className="w-full flex-1 items-center justify-start">
           {/* loaction and date */}
-          <View className="my-16 w-full px-6">
-            <Text
+          <View className="my-14 w-full px-6">
+            {/* <Text
               className="w-full text-left text-5xl text-white"
               style={{
                 textShadowColor: 'rgba(0, 0, 0, 0.5)',
@@ -153,7 +155,12 @@ export default function Home() {
               }}>
               {location?.name},
               <Text className="text-3xl text-white/90">{' ' + location?.country}</Text>
-            </Text>
+            </Text> */}
+            <SlidingText
+              city={location?.name ?? ''}
+              country={location?.country ?? ''}
+              updated={(updated = !updated)}
+            />
             <Text
               style={{
                 textShadowColor: 'rgba(0, 0, 0, 0.2)',
@@ -169,7 +176,14 @@ export default function Home() {
           <View className="mx-6 flex w-full flex-col items-center justify-center gap-2">
             {/* <Image source={require('../assets/images/partlycloudy.png')} className="h-40 w-40" /> */}
             {/* <Image source={{ uri: 'https:' + current?.condition?.icon }} className="h-40 w-40" /> */}
-            <Image source={weatherIcon[current?.condition?.text]} className="h-40 w-40" />
+            <Image
+              source={
+                weatherIcon[current?.condition?.text]
+                  ? weatherIcon[current?.condition?.text]
+                  : { uri: 'https:' + current?.condition?.icon }
+              }
+              className="h-40 w-40"
+            />
             <Text
               className="text-center text-6xl text-white"
               style={{
@@ -236,7 +250,14 @@ export default function Home() {
                   <View
                     key={i}
                     className="mx-2 flex flex-col items-center rounded-3xl bg-white/15 px-6 py-4">
-                    <Image source={weatherIcon[day?.day?.condition?.text]} className="h-14 w-14" />
+                    <Image
+                      source={
+                        weatherIcon[day?.day?.condition?.text]
+                          ? weatherIcon[day?.day?.condition?.text]
+                          : { uri: 'https:' + day?.day?.condition?.icon }
+                      }
+                      className="h-14 w-14"
+                    />
                     <Text className="text-white">{dateObj}</Text>
                     <Text className="text-white/70">{day?.day?.avgtemp_c}&#176;C</Text>
                   </View>
