@@ -57,7 +57,7 @@ export default function Home() {
   };
 
   const handleCity = (text) => {
-    console.log('Searching for city:', text);
+    // console.log('Searching for city:', text);
     if (text.length > 2) {
       getLocation({ city: text })
         .then((data) => {
@@ -82,8 +82,9 @@ export default function Home() {
     <View className="relative flex-1">
       <StatusBar style="light" />
       <Image
-        source={require('../assets/images/balls.png')}
-        blurRadius={12}
+        source={require('../assets/images/bgb.jpg')}
+        blurRadius={60}
+        // blurRadius={12}
         className="absolute h-full w-full"
       />
 
