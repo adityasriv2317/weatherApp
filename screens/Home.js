@@ -146,16 +146,6 @@ export default function Home() {
         <View className="w-full flex-1 items-center justify-start">
           {/* loaction and date */}
           <View className="my-14 w-full px-6">
-            {/* <Text
-              className="w-full text-left text-5xl text-white"
-              style={{
-                textShadowColor: 'rgba(0, 0, 0, 0.5)',
-                textShadowOffset: { width: 1, height: 1 },
-                textShadowRadius: 2,
-              }}>
-              {location?.name},
-              <Text className="text-3xl text-white/90">{' ' + location?.country}</Text>
-            </Text> */}
             <SlidingText
               city={location?.name ?? ''}
               country={location?.country ?? ''}
@@ -174,8 +164,6 @@ export default function Home() {
 
           {/* image and temperature */}
           <View className="mx-6 flex w-full flex-col items-center justify-center gap-2">
-            {/* <Image source={require('../assets/images/partlycloudy.png')} className="h-40 w-40" /> */}
-            {/* <Image source={{ uri: 'https:' + current?.condition?.icon }} className="h-40 w-40" /> */}
             <Image
               source={
                 weatherIcon[current?.condition?.text]
@@ -228,8 +216,8 @@ export default function Home() {
           {/* next 7 days */}
           <View className="mt-10 w-full">
             <View className="mx-6 flex w-full flex-row items-center justify-start gap-2">
-              <CalendarDaysIcon size={25} color="white" />{' '}
-              <Text className="text-xl text-white">This Week</Text>
+              <CalendarDaysIcon size={25} color="white" />
+              <Text className="text-xl text-white"> This Week</Text>
             </View>
 
             <ScrollView
@@ -267,6 +255,7 @@ export default function Home() {
           </View>
         </View>
       </SafeAreaView>
+
       {/* loader */}
       {isSearching || weatherData === null ? (
         <View className="z-100 absolute h-full w-full flex-1 items-center justify-center bg-slate-800 opacity-90 backdrop:blur-3xl">
