@@ -43,10 +43,10 @@ export function SetLocation({ navigation }) {
     storeData('defaultCity', city);
     setLoading(false);
     setIsSearching(false);
-    console.log(navigation.navigate('Home'));
+    // console.log(navigation.navigate('Home'));
     Keyboard.dismiss();
     // navigation.navigate('Home');
-    console.log('Selected location:', location);
+    // console.log('Selected location:', location);
     navigation.navigate('Home');
     setLoactions([]);
   };
@@ -70,10 +70,10 @@ export function SetLocation({ navigation }) {
           />
           <Text className="text-lg text-white">Select your city to continue</Text>
         </View>
-        <View className="z-10 flex h-full w-full items-start bg-white pt-6">
-          <View className="z-100 min-h-[7%] w-full px-6">
+        <View className="z-10 flex h-full w-full items-start bg-white">
+          <View className="z-100 min-h-[7%] w-full px-6 py-2">
             <View
-              className={`flex flex-row items-center justify-center rounded-full bg-black/50 py-2`}>
+              className={`mt-2 flex flex-row items-center justify-center rounded-full bg-black/50 py-2`}>
               <TextInput
                 onChangeText={(text) => {
                   setText(text);

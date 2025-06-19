@@ -74,7 +74,6 @@ export default function Home() {
     }
   };
 
-  
   const textDebounce = useCallback(debounce(handleCity, 1000), []);
   let { current, location, forecast } = weatherData || { current: {}, location: {} };
   const date = new Date().toLocaleDateString('en-US', {
@@ -82,7 +81,7 @@ export default function Home() {
     month: 'long',
     day: '2-digit',
   });
-  
+
   // console.log(location);
 
   return (
@@ -144,12 +143,16 @@ export default function Home() {
 
           {/* image and temperature */}
           <View className="mx-6 flex w-full -translate-y-8 flex-col items-center justify-center gap-2">
-            <LottieView
-              autoPlay
-              loop
-              style={{ width: 200, height: 200 }}
-              source={lottieAnimation[current?.condition?.text]}
-            />
+            {lottieAnimation[current?.condition?.text.trim().toLowerCase()] ? (
+              <LottieView
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+                source={lottieAnimation[current?.condition?.text.trim().toLowerCase()]}
+              />
+            ) : (
+              <Image source={{ uri: 'https:' + current?.condition?.icon }} className="h-40 w-40" />
+            )}
             <Text
               className="text-center text-6xl text-white"
               style={{
@@ -218,8 +221,8 @@ export default function Home() {
                     className="mx-2 flex flex-col items-center rounded-3xl bg-white/15 px-6 py-4">
                     <Image
                       source={
-                        weatherIcon[day?.day?.condition?.text]
-                          ? weatherIcon[day?.day?.condition?.text]
+                        weatherIcon[day?.day?.condition?.text.trim().toLowerCase()]
+                          ? weatherIcon[day?.day?.condition?.text.trim().toLowerCase()]
                           : { uri: 'https:' + day?.day?.condition?.icon }
                       }
                       className="h-14 w-14"

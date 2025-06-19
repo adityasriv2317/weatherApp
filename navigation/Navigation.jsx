@@ -19,7 +19,7 @@ export default function NavigationModule() {
     });
   }, []);
 
-  removeData('defaultCity'); // Remove this line if you want to keep the default city in storage
+  // removeData('defaultCity'); // Remove this line if you want to keep the default city in storage
 
   // if (loading) return null; // or a splash/loading screen
 
