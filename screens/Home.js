@@ -11,6 +11,8 @@ import { weatherIcon } from 'constants';
 import { storeData, getData } from 'utils/storage';
 import { Indicator } from 'components/Loader';
 import SlidingText from 'components/LocationHeader';
+import LottieView from 'lottie-react-native';
+import { lottieAnimation } from 'constants';
 
 export default function Home() {
   const [isSearching, setIsSearching] = useState(false);
@@ -163,14 +165,12 @@ export default function Home() {
           </View>
 
           {/* image and temperature */}
-          <View className="mx-6 flex w-full flex-col items-center justify-center gap-2">
-            <Image
-              source={
-                weatherIcon[current?.condition?.text]
-                  ? weatherIcon[current?.condition?.text]
-                  : { uri: 'https:' + current?.condition?.icon }
-              }
-              className="h-40 w-40"
+          <View className="mx-6 flex w-full -translate-y-8 flex-col items-center justify-center gap-2">
+            <LottieView
+              autoPlay
+              loop
+              style={{ width: 200, height: 200 }}
+              source={lottieAnimation[current?.condition?.text]}
             />
             <Text
               className="text-center text-6xl text-white"
