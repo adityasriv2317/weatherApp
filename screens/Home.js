@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CalendarDaysIcon, MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import { MapPinIcon } from 'react-native-heroicons/solid';
 import debounce from 'lodash.debounce';
+
 import { getLocation, getWeather } from 'api/handler';
 import { weatherIcon } from 'constants';
 import { storeData, getData } from 'utils/storage';
@@ -48,11 +49,7 @@ export default function Home() {
 
   const fetchInitialWeather = async () => {
     setLoading(true);
-    const sCity = await getData('city');
-    let city = 'Varanasi';
-    if (sCity) {
-      city = sCity;
-    }
+    const city = await getData('defaultCity');
     await getWeather({ city, days: 7 })
       .then((data) => {
         setWeatherData(data);
@@ -77,6 +74,7 @@ export default function Home() {
     }
   };
 
+  
   const textDebounce = useCallback(debounce(handleCity, 1000), []);
   let { current, location, forecast } = weatherData || { current: {}, location: {} };
   const date = new Date().toLocaleDateString('en-US', {
@@ -84,6 +82,8 @@ export default function Home() {
     month: 'long',
     day: '2-digit',
   });
+  
+  // console.log(location);
 
   return (
     <View className="relative flex-1">
