@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, Image, SafeAreaView, TextInput, ScrollView } from 'react-native';
+import { View, Text, Image, TextInput, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CalendarDaysIcon, MagnifyingGlassIcon, XMarkIcon } from 'react-native-heroicons/outline';
 import { MapPinIcon } from 'react-native-heroicons/solid';
 import debounce from 'lodash.debounce';
+
 import { getLocation, getWeather } from 'api/handler';
 import { weatherIcon } from 'constants';
 import { storeData, getData } from 'utils/storage';
@@ -47,11 +49,7 @@ export default function Home() {
 
   const fetchInitialWeather = async () => {
     setLoading(true);
-    const sCity = await getData('city');
-    let city = 'Varanasi';
-    if (sCity) {
-      city = sCity;
-    }
+    const city = await getData('defaultCity');
     await getWeather({ city, days: 7 })
       .then((data) => {
         setWeatherData(data);
@@ -84,6 +82,8 @@ export default function Home() {
     day: '2-digit',
   });
 
+  // console.log(location);
+
   return (
     <View className="relative flex-1">
       <StatusBar style="light" />
@@ -94,8 +94,8 @@ export default function Home() {
       />
 
       {/* search button */}
-      <SafeAreaView className="flex-1 pt-20">
-        <View className="absolute top-0 z-50 my-[4.5rem] min-h-[7%] w-full px-6">
+      <SafeAreaView className="z-50 flex-1 pt-20">
+        <View className="z-100 absolute top-0 my-[4.5rem] min-h-[7%] w-full px-6">
           <View
             className={`flex flex-row items-center justify-center ${isSearching ? 'rounded-full bg-black/50 py-2' : 'rounded-md py-8'}`}>
             {isSearching ? (
@@ -118,29 +118,6 @@ export default function Home() {
                 <XMarkIcon size={20} color={'white'} />
               )}
             </TouchableOpacity>
-          </View>
-
-          {/* locations */}
-          <View>
-            {locations.length > 0 && isSearching ? (
-              <View className="absolute top-1 w-full rounded-3xl bg-black/80 opacity-90 backdrop:blur-3xl">
-                {locations.map((l, i) => {
-                  const isLast = i === locations.length - 1;
-                  return (
-                    <TouchableOpacity
-                      key={i}
-                      onPress={handleLocationPress(l)}
-                      className={`mb-1 flex flex-row items-center justify-center p-3 px-4 text-center ${!isLast ? ' border-b border-b-white/30' : ''}`}>
-                      <MapPinIcon size={20} color="rgba(255,255,255,0.7)" />
-                      <Text className="text-lg text-white">
-                        {' '}
-                        {l.name},{l.country == 'India' ? ` ${l.region}` : ` ${l.country}`}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            ) : null}
           </View>
         </View>
 
@@ -166,12 +143,16 @@ export default function Home() {
 
           {/* image and temperature */}
           <View className="mx-6 flex w-full -translate-y-8 flex-col items-center justify-center gap-2">
-            <LottieView
-              autoPlay
-              loop
-              style={{ width: 200, height: 200 }}
-              source={lottieAnimation[current?.condition?.text]}
-            />
+            {lottieAnimation[current?.condition?.text.trim().toLowerCase()] ? (
+              <LottieView
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+                source={lottieAnimation[current?.condition?.text.trim().toLowerCase()]}
+              />
+            ) : (
+              <Image source={{ uri: 'https:' + current?.condition?.icon }} className="h-40 w-40" />
+            )}
             <Text
               className="text-center text-6xl text-white"
               style={{
@@ -193,7 +174,7 @@ export default function Home() {
           </View>
 
           {/* weather details */}
-          <View className="min-gap-4 mt-10 flex w-full flex-row items-center justify-around">
+          <View className="min-gap-4 flex w-full flex-row items-center justify-around">
             <View className="flex flex-col items-center justify-center">
               <Image source={require('../assets/icons/drop.png')} className="h-8 w-8" />
               <Text className="text-white">Humidity</Text>
@@ -240,8 +221,8 @@ export default function Home() {
                     className="mx-2 flex flex-col items-center rounded-3xl bg-white/15 px-6 py-4">
                     <Image
                       source={
-                        weatherIcon[day?.day?.condition?.text]
-                          ? weatherIcon[day?.day?.condition?.text]
+                        weatherIcon[day?.day?.condition?.text.trim().toLowerCase()]
+                          ? weatherIcon[day?.day?.condition?.text.trim().toLowerCase()]
                           : { uri: 'https:' + day?.day?.condition?.icon }
                       }
                       className="h-14 w-14"
@@ -255,10 +236,9 @@ export default function Home() {
           </View>
         </View>
       </SafeAreaView>
-
       {/* loader */}
       {isSearching || weatherData === null ? (
-        <View className="z-100 absolute h-full w-full flex-1 items-center justify-center bg-slate-800 opacity-90 backdrop:blur-3xl">
+        <View className="absolute z-50 h-full w-full flex-1 items-center justify-center bg-slate-800 opacity-90 backdrop:blur-3xl">
           {loading ? (
             <Indicator size={80} />
           ) : (
@@ -266,6 +246,55 @@ export default function Home() {
               Search your city
             </Text>
           )}
+
+          <View className="z-100 absolute top-0 my-[4.5rem] min-h-[7%] w-full px-6">
+            <View
+              className={`flex flex-row items-center justify-center ${isSearching ? 'rounded-full bg-black/50 py-2' : 'rounded-md py-8'}`}>
+              {isSearching ? (
+                <TextInput
+                  onChangeText={textDebounce}
+                  placeholder="Search City"
+                  className="w-full text-center text-white"
+                  placeholderTextColor="rgba(255, 255, 255, 0.8)"
+                />
+              ) : null}
+
+              <TouchableOpacity
+                onPress={() => {
+                  setIsSearching(!isSearching);
+                }}
+                className="absolute right-1.5 rounded-full bg-white/20 p-3.5">
+                {!isSearching ? (
+                  <MagnifyingGlassIcon size={20} color="white" />
+                ) : (
+                  <XMarkIcon size={20} color={'white'} />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {/* locations */}
+            <View>
+              {locations.length > 0 && isSearching ? (
+                <View className="absolute top-1 w-full rounded-3xl bg-black/80 opacity-90 backdrop:blur-3xl">
+                  {locations.map((l, i) => {
+                    const isLast = i === locations.length - 1;
+                    return (
+                      <TouchableOpacity
+                        key={i}
+                        onPress={handleLocationPress(l)}
+                        className={`mb-1 flex flex-row items-center justify-center p-3 px-4 text-center ${!isLast ? ' border-b border-b-white/30' : ''}`}>
+                        <MapPinIcon size={20} color="rgba(255,255,255,0.7)" />
+                        <Text className="text-lg text-white">
+                          {' '}
+                          {l.name},{l.country == 'India' ? ` ${l.region}` : ` ${l.country}`}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ) : null}
+            </View>
+          </View>
         </View>
       ) : null}
     </View>
