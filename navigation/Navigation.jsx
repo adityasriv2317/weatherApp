@@ -8,8 +8,13 @@ const Stack = createNativeStackNavigator();
 export default function NavigationModule() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="SetLocation"
+          component={require('screens/SetLocation').default}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
