@@ -41,6 +41,7 @@ export function SetLocation({ navigation }) {
     setLoading(true);
     const city = location.name;
     storeData('defaultCity', city);
+    console.log('stored');
     setLoading(false);
     setIsSearching(false);
     // console.log(navigation.navigate('Home'));

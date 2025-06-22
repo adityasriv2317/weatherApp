@@ -82,7 +82,13 @@ export default function Home() {
     day: '2-digit',
   });
 
-  // console.log(location);
+  // if (!current || !location || !forecast) {
+  //   return (
+  //     <View className="flex-1 items-center justify-center bg-slate-800">
+  //       <Indicator size={80} />
+  //     </View>
+  //   );
+  // }
 
   return (
     <View className="relative flex-1">
@@ -234,8 +240,11 @@ export default function Home() {
               })}
             </ScrollView>
           </View>
+
+          {/* additional controls */}
         </View>
       </SafeAreaView>
+
       {/* loader */}
       {isSearching || weatherData === null ? (
         <View className="absolute z-50 h-full w-full flex-1 items-center justify-center bg-slate-800 opacity-90 backdrop:blur-3xl">

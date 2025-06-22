@@ -9,25 +9,33 @@ import { getData, removeData } from 'utils/storage';
 const Stack = createNativeStackNavigator();
 
 export default function NavigationModule() {
-  const [defaultCity, setDefaultCity] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [defaultPage, setDefaultPage] = useState(null);
+
+  const fetchInitialWeather = async () => {
+    try {
+      const city = await getData('defaultCity');
+      if (city) {
+        setDefaultPage('Home');
+      } else {
+        setDefaultPage('SetLocation');
+      }
+    } catch (error) {
+      console.error('Error fetching initial weather:', error);
+      setDefaultPage('SetLocation');
+    }
+  };
 
   useEffect(() => {
-    getData('defaultCity').then((city) => {
-      setDefaultCity(city);
-      setLoading(false);
-    });
+    fetchInitialWeather();
   }, []);
 
-  // removeData('defaultCity'); // Remove this line if you want to keep the default city in storage
-
-  // if (loading) return null; // or a splash/loading screen
+  if (defaultPage === null) {
+    return null;
+  }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName={defaultCity ? 'Home' : 'SetLocation'}
-        screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName={defaultPage} screenOptions={{ headerShown: false }}>
         <Stack.Screen name="SetLocation" component={SetLocation} />
         <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
